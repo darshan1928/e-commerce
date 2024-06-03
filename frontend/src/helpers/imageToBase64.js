@@ -1,4 +1,3 @@
-import React from "react";
 
 const imageToBase64 = async (image) => {
   const reader = new FileReader();

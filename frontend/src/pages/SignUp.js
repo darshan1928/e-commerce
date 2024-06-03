@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import loginIcons from "../assest/signin.gif";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import imageToBase64 from "../helpers/imageToBase64";
+import summaryApi from "../common/summaryApi";
+import { toast } from "react-toastify";
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -34,9 +37,39 @@ const SignUp = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (data.password === data.confirmPassword) {
+      try {
+        const response = await fetch(summaryApi.signUp.api, {
+          method: summaryApi.signUp.method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const resData = await response.json();
+        if (resData.success) {
+          toast.success(resData.message);
+          navigate("/login");
+        }
+        if (resData.error) {
+          toast.error(resData.message);
+        }
+      } catch (error) {
+        console.error("NetworkError:", error);
+      }
+    } else {
+      console.log("please check password and confirm password");
+      toast.error("please check password and confirm password");
+    }
   };
+
   return (
     <section id="signup">
       <div className="mx-auto container p-4">
