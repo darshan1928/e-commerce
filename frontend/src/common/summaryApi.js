@@ -5,6 +5,10 @@ const summaryApi = {
     api: `${backendDomin}/api/signup`,
     method: "post",
   },
+  signIn: {
+    api: `${backendDomin}/api/signin`,
+    method: "post",
+  },
 };
 
 export default summaryApi;

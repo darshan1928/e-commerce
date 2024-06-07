@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import loginIcons from "../assest/signin.gif";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import summaryApi from "../common/summaryApi";
+import { toast } from "react-toastify";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({
     email: "",
     password: "",
   });
+
+  const navigate = useNavigate();
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -18,8 +22,31 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      const response = await fetch(summaryApi.signIn.api, {
+        method: summaryApi.signIn.method,
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      const resData = await response.json();
+
+      if (resData.success) {
+        toast.success(resData.message);
+        navigate("/");
+      }
+      if (resData.error) {
+        throw new Error(` ${resData.message}`);
+      }
+    } catch (error) {
+      toast.error(error.message || error);
+      console.error("NetworkError:", error);
+    }
   };
   return (
     <section id="login">

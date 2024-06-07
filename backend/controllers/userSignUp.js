@@ -26,7 +26,7 @@ const userSignUpController = async (req, res) => {
     if (!hashPassword) {
       throw new Error("Password Hashed Wrongly");
     }
-    const payload = { ...req.body, password: hashPassword };
+    const payload = { ...req.body, role: "GENERAL", password: hashPassword };
 
     const userData = new userModel(payload);
 
