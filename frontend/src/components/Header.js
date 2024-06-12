@@ -1,10 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import Logo from "./Logo";
 import { GrSearch } from "react-icons/gr";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import summaryApi from "../common/summaryApi";
+import { toast } from "react-toastify";
+import { setUserDetails } from "../redux/slice/userSlice.";
+import ROLE from "../common/role";
 export const Header = () => {
+  const [menuDisplay, setMenuDisplay] = useState(false);
+  const user = useSelector((state) => state?.user?.user);
+  const dispatch = useDispatch();
+  const handleLogout = async () => {
+    const response = await fetch(`${summaryApi.logoutUser.api}`, {
+      method: `${summaryApi.logoutUser.method}`,
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    if (data?.success) {
+      toast.success(data.message);
+      dispatch(setUserDetails(null));
+    }
+    if (data?.error) {
+      toast.error(data.message);
+    }
+  };
+
   return (
     <header className="h-16 shadow-md">
       <div className="h-full container max-auto flex items-center px-4 justify-between">
@@ -24,8 +48,39 @@ export const Header = () => {
           </div>
         </div>
         <div className="flex items-center gap-7">
-          <div className="cursor-pointer text-3xl">
-            <FaRegCircleUser />
+          <div className="relative  flex justify-center">
+            {" "}
+            {user?._id && (
+              <div
+                className="cursor-pointer relative  flex justify-center text-3xl "
+                onClick={() => setMenuDisplay((pre) => !pre)}
+              >
+                {user?.profilePic ? (
+                  <img
+                    alt={user?.name}
+                    className="w-10 h-10 rounded-full"
+                    src={user?.profilePic}
+                  />
+                ) : (
+                  <FaRegCircleUser />
+                )}
+              </div>
+            )}
+            {menuDisplay && (
+              <div className="absolute  bg-white bottom-0 top-11 h-fit p-2  shadow-lg rounded ">
+                <nav>
+                  {user.role === ROLE.ADMIN && (
+                    <Link
+                      to={"/admin-panel/all-products"}
+                      className="whitespace-nowrap hidden md:block hover:bg-slate-100 p-2"
+                      onClick={() => setMenuDisplay((pre) => !pre)}
+                    >
+                      Admin Panel
+                    </Link>
+                  )}
+                </nav>
+              </div>
+            )}
           </div>
           <div className="text-2xl relative">
             <span>
@@ -36,12 +91,21 @@ export const Header = () => {
             </div>
           </div>
           <div>
-            <Link
-              to={"/login"}
-              className="px-3 py-1 rounded-full bg-red-600 text-white  hover:bg-red-700"
-            >
-              Login
-            </Link>
+            {user?._id ? (
+              <button
+                onClick={handleLogout}
+                className="px-3 py-1 rounded-full bg-red-600 text-white  hover:bg-red-700"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                to={"/login"}
+                className="px-3 py-1 rounded-full bg-red-600 text-white  hover:bg-red-700"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </div>

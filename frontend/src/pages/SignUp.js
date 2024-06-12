@@ -65,7 +65,6 @@ const SignUp = () => {
         console.error("NetworkError:", error);
       }
     } else {
-      console.log("please check password and confirm password");
       toast.error("please check password and confirm password");
     }
   };

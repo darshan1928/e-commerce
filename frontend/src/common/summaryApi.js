@@ -13,6 +13,26 @@ const summaryApi = {
     api: `${backendDomin}/api/user-details`,
     method: "get",
   },
+  logoutUser: {
+    api: `${backendDomin}/api/user-logout`,
+    method: "get",
+  },
+  adminPanel: {
+    api: `${backendDomin}/api/admin-panel`,
+    method: "get",
+  },
+  allUsers: {
+    api: `${backendDomin}/api/all-users`,
+    method: "get",
+  },
+  allProducts: {
+    api: `${backendDomin}/api/all-products`,
+    method: "get",
+  },
+  updateUser: {
+    api: `${backendDomin}/api/update-user`,
+    method: "post",
+  },
 };
 
 export default summaryApi;

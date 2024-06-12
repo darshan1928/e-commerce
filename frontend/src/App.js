@@ -4,9 +4,13 @@ import { ToastContainer } from "react-toastify";
 import Footer from "./components/Footer";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import summaryApi from "./common/summaryApi";
 import Context from "./context/index";
+import { setUserDetails } from "./redux/slice/userSlice.";
+import "./App.css"
 export default function App() {
+  const dispatch = useDispatch()
   const fetchUserDetails = async () => {
     const userResponse = await fetch(`${summaryApi.currentUser.api}`, {
       method: `${summaryApi.currentUser.method}`,
@@ -14,7 +18,9 @@ export default function App() {
     });
 
     const dataApi = await userResponse.json();
-    console.log("dataApi==", dataApi);
+    if(dataApi.success){
+      dispatch(setUserDetails(dataApi.data))
+    }
   };
 
   useEffect(() => {
